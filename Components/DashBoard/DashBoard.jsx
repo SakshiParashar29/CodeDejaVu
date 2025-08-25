@@ -14,7 +14,7 @@ const DashBoard = () => {
   return (
     <div className="p-4">
       <Profile reload={reloadAll} />
-      <MarkedProblems onAction={triggerReload} />
+      <MarkedProblems onAction={triggerReload} reload={reloadAll} />
       <AddForm onAction={triggerReload} />
       <Problems reload={reloadAll} />
     </div>

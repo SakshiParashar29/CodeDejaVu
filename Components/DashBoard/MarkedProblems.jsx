@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SiLeetcode, SiCodeforces, SiCodechef, SiGeeksforgeeks } from 'react-icons/si';
 import axios from 'axios';
 
-const MarkedProblems = ({onAction}) => {
+const MarkedProblems = ({onAction, reload}) => {
   const [problems, setProblems] = useState([]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const MarkedProblems = ({onAction}) => {
     };
 
     fetchProblems();
-  }, []);
+  }, [reload]);
 
   const toggleReviewed = async (index) => {
   try {
