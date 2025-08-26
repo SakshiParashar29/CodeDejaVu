@@ -93,13 +93,14 @@ export const streakCount = async (req, res) => {
             return res.status(200).json(new ApiResponse(200, "Streak count", 0, true));
         }
         
-        let uniqueDays = [];
+        const uniqueDaysSet = new Set();
         for(let prob of problems){
             let day = new Date(prob.createdAt).setHours(0, 0, 0, 0);
-            if(!uniqueDays.includes(day))
-                uniqueDays.push(day);
+            uniqueDaysSet.add(day);
         }
-
+        
+        let uniqueDays = Array.from(uniqueDaysSet).sort((a, b) => a - b);
+        
         let streak = 0;
         let today = new Date().setHours(0, 0, 0, 0);
         let prevDate = uniqueDays[uniqueDays.length - 1];
