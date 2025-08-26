@@ -87,7 +87,7 @@ export const reviewedProblems = async (req, res) => {
 // Streak count
 export const streakCount = async (req, res) => {
     try {
-        const problems = await Problems.find({ user: req.user._id, reviewed: true}).sort({ createdAt: 1 });
+        const problems = await Problems.find({ user: req.user._id, reviewed: true}).sort({ reviewedAt: 1 });
 
         if (problems.length === 0) {
             return res.status(200).json(new ApiResponse(200, "Streak count", 0, true));
@@ -95,19 +95,19 @@ export const streakCount = async (req, res) => {
         
         const uniqueDaysSet = new Set();
         for(let prob of problems){
-            let day = new Date(prob.createdAt).setHours(0, 0, 0, 0);
+            let day = new Date(prob.reviewedAt).setHours(0, 0, 0, 0);
             uniqueDaysSet.add(day);
         }
         
         let uniqueDays = Array.from(uniqueDaysSet).sort((a, b) => a - b);
-        
+
         let streak = 0;
         let today = new Date().setHours(0, 0, 0, 0);
         let prevDate = uniqueDays[uniqueDays.length - 1];
 
         if(today === uniqueDays[uniqueDays.length - 1])
         {
-            streak++;
+            streak = 1;
             prevDate = today;
         }
 

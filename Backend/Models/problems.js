@@ -18,6 +18,10 @@ const problemSchema = new mongoose.Schema({
         default: false,
         required: true,
     },
+    reviewedAt: {
+        type: Date,
+        default: null
+    },
     platform: {
         type: String,
         required: true,
