@@ -1,8 +1,14 @@
 import React from 'react';
 import { FaGithub, FaLinkedin, FaHeart } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Footer = () => {
+  const navigate = useNavigate();
+
+  const handleHomeClick = () => {
+    localStorage.removeItem('token'); 
+    navigate('/dashboard');
+  };
   return (
     <footer className="bg-gray-100 text-gray-700 py-10 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
@@ -17,7 +23,11 @@ const Footer = () => {
         <div>
           <h3 className="font-semibold mb-2">Quick Links</h3>
           <ul className="space-y-1">
-            <li><Link to="/dashboard" className="hover:underline">Home</Link></li>
+            <li>
+              <button onClick={handleHomeClick} className="hover:underline">
+                Home
+              </button>
+            </li>
             {/* <li><Link href="#features" className="hover:underline">Features</Link></li>
             <li><Link href="#memes" className="hover:underline">Memes</Link></li> */}
             <li><Link to="/signIn" className="hover:underline">Sign In</Link></li>
