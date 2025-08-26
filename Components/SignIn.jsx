@@ -12,6 +12,8 @@ const SignIn = () => {
   const submitForm = async (e) => {
     e.preventDefault();
 
+    localStorage.removeItem("token");
+
     if (!identifier || !password) {
       alert("Enter the necessary credentials");
       return;
