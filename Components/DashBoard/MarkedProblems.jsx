@@ -22,32 +22,32 @@ const MarkedProblems = ({onAction, reload}) => {
   }, [reload]);
 
   const toggleReviewed = async (index) => {
-  try {
-    const updatedProblems = [...problems];
-    const problem = updatedProblems[index];
-    const newReviewed = !problem.reviewed;
+    try {
+      const updatedProblems = [...problems];
+      const problem = updatedProblems[index];
+      const newReviewed = !problem.reviewed;
 
-    problem.reviewed = newReviewed;
-    setProblems(updatedProblems);
+      problem.reviewed = newReviewed;
+      setProblems(updatedProblems);
 
-    // Send PATCH request to backend
-    const token = localStorage.getItem("token");
-    await axios.post(
-      `https://codedejavu-1.onrender.com/api/update-problem`,
-      { problemId: problem._id, reviewed: newReviewed },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      // Send PATCH request to backend
+      const token = localStorage.getItem("token");
+      await axios.post(
+        `https://codedejavu-1.onrender.com/api/update-problem`,
+        { problemId: problem._id, reviewed: newReviewed },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    if(onAction) onAction();
-  } catch (error) {
-    console.error("Error updating problem:", error);
+      if(onAction) onAction();
+    } catch (error) {
+      console.error("Error updating problem:", error);
 
-    // Rollback UI if API fails
-    const rollbackProblems = [...problems];
-    rollbackProblems[index].reviewed = !rollbackProblems[index].reviewed;
-    setProblems(rollbackProblems);
-  }
-};
+      // Rollback UI if API fails
+      const rollbackProblems = [...problems];
+      rollbackProblems[index].reviewed = !rollbackProblems[index].reviewed;
+      setProblems(rollbackProblems);
+    }
+  };
 
   // Map platform name to icon
   const renderPlatformIcon = (platform) => {
@@ -79,43 +79,46 @@ const MarkedProblems = ({onAction, reload}) => {
         </span>
       </h2>
 
-      {/* Table Header */}
-      <div className="grid grid-cols-1 md:grid-cols-4 mt-6 px-20 text-xl font-semibold text-gray-700 mb-2">
-        <div>Problem</div>
-        <div>Difficulty</div>
-        <div className="text-center">Platform</div>
-        <div className="text-center">Reviewed</div>
-      </div>
-
-      {/* Problems Rows */}
+      {/* ✅ FIXED: wrap header + rows inside the else block */}
       {problems.length === 0 ? (
         <div className="text-center text-gray-500 mt-10">
           No problems marked yet. Start adding some to build your revision vault!
         </div>
       ) : (
-        problems.map((problem, index) => (
-          <div
-            key={problem._id}
-            className="grid grid-cols-1 md:grid-cols-4 px-20 py-3 text-gray-600 font-semibold text-lg border-t border-b hover:bg-gray-50 transition-colors duration-200 items-center"
-          >
-            <div>{problem.name}</div>
-            <div className={`pl-4 ${getDifficultyColor(problem.difficulty)}`}>
-              {problem.difficulty}
-            </div>
-            <div className="flex justify-center items-center text-2xl">
-              <a href={problem.link} target="_blank" rel="noopener noreferrer">
-                {renderPlatformIcon(problem.platform)}
-              </a>
-            </div>
-            <div className="flex justify-center items-center">
-              <input
-                type="checkbox"
-                checked={problem.reviewed}
-                onChange={() => toggleReviewed(index)}
-              />
-            </div>
+        <>
+          {/* Table Header */}
+          <div className="grid grid-cols-1 md:grid-cols-4 mt-6 px-20 text-xl font-semibold text-gray-700 mb-2">
+            <div>Problem</div>
+            <div>Difficulty</div>
+            <div className="text-center">Platform</div>
+            <div className="text-center">Reviewed</div>
           </div>
-        ))
+
+          {/* Problems Rows */}
+          {problems.map((problem, index) => (
+            <div
+              key={problem._id}
+              className="grid grid-cols-1 md:grid-cols-4 px-20 py-3 text-gray-600 font-semibold text-lg border-t border-b hover:bg-gray-50 transition-colors duration-200 items-center"
+            >
+              <div>{problem.name}</div>
+              <div className={`pl-4 ${getDifficultyColor(problem.difficulty)}`}>
+                {problem.difficulty}
+              </div>
+              <div className="flex justify-center items-center text-2xl">
+                <a href={problem.link} target="_blank" rel="noopener noreferrer">
+                  {renderPlatformIcon(problem.platform)}
+                </a>
+              </div>
+              <div className="flex justify-center items-center">
+                <input
+                  type="checkbox"
+                  checked={problem.reviewed}
+                  onChange={() => toggleReviewed(index)}
+                />
+              </div>
+            </div>
+          ))}
+        </>
       )}
     </div>
   );
