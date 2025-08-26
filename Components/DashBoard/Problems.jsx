@@ -9,7 +9,7 @@ const Problems = ({ reload }) => {
     const fetchProblems = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/api/get-problems', {
+        const response = await axios.get('https://code-deja-vu.vercel.app/api/get-problems', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProblems(response.data.data || []);

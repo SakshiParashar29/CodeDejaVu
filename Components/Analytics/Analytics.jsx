@@ -57,7 +57,7 @@ const options = {
     const fetchGraph = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:3000/api/heat-map', {
+        const res = await axios.get('https://code-deja-vu.vercel.app/api/heat-map', {
           headers: { Authorization: `Bearer ${token}` }
         });
 

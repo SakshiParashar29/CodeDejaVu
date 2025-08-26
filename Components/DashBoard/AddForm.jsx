@@ -37,7 +37,7 @@ const AddForm = ({onAction}) => {
     const token = localStorage.getItem("token");
 
     const response = await axios.post(
-      "http://localhost:3000/api/add-problem",
+      "https://code-deja-vu.vercel.app/api/add-problem",
       { name, link, difficulty, platform },
       { headers: { Authorization: `Bearer ${token}` } }
     );

@@ -12,17 +12,17 @@ const Profile = ({ reload }) => {
       try {
         const token = localStorage.getItem('token');
 
-        const problemsCount = await axios.get('http://localhost:3000/api/problem-count', {
+        const problemsCount = await axios.get('https://code-deja-vu.vercel.app/api/problem-count', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setTotalProblems(problemsCount.data.data);
 
-        const streakData = await axios.get('http://localhost:3000/api/streak', {
+        const streakData = await axios.get('https://code-deja-vu.vercel.app/api/streak', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setStreak(streakData.data.data);
 
-        const reviewedCnt = await axios.get('http://localhost:3000/api/reviewed-problems', {
+        const reviewedCnt = await axios.get('https://code-deja-vu.vercel.app/api/reviewed-problems', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setSolved(reviewedCnt.data.data);
