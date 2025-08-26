@@ -11,13 +11,13 @@ export const addProblem = async (req, res) => {
         }
 
         const newProblem = await Problems.create({
-            name, link, platform, difficulty, 
+            name, link, platform, difficulty,
             user: req.user._id
         });
 
         return res.status(201).json(new ApiResponse(201, "Problem added to list", newProblem, true));
     } catch (err) {
-        return res.status(500).json(new ApiResponse(500, "Something went wrong",err.message, false));
+        return res.status(500).json(new ApiResponse(500, "Something went wrong", err.message, false));
     }
 };
 // Get all the problems to display on the dashboard
@@ -48,19 +48,24 @@ export const updateProblem = async (req, res) => {
 
         const problem = await Problems.findOneAndUpdate(
             { _id: problemId, user: req.user._id },
-            { $set: { reviewed } },
-            { new: true } 
+            {
+                $set: {
+                    reviewed,
+                    reviewedAt: reviewed ? new Date() : null
+                }
+            },
+            { new: true }
         );
 
         if (!problem) {
-            return res.status(404).json(new ApiResponse(404, "Problem not found", data.message, false));
+            return res.status(404).json(new ApiResponse(404, "Problem not found", null, false));
         }
 
         return res.status(200).json(
             new ApiResponse(200, "Problem updated successfully", problem, true)
         );
     } catch (err) {
-        return res.status(500).json(new ApiResponse(500, "Error updating problem", data.message, false));
+        return res.status(500).json(new ApiResponse(500, "Error updating problem", err.message, false));
     }
 };
 
@@ -87,26 +92,25 @@ export const reviewedProblems = async (req, res) => {
 // Streak count
 export const streakCount = async (req, res) => {
     try {
-        const problems = await Problems.find({ user: req.user._id, reviewed: true}).sort({ reviewedAt: 1 });
+        const problems = await Problems.find({ user: req.user._id, reviewed: true }).sort({ reviewedAt: 1 });
 
         if (problems.length === 0) {
             return res.status(200).json(new ApiResponse(200, "Streak count", 0, true));
         }
-        
+
         const uniqueDaysSet = new Set();
-        for(let prob of problems){
+        for (let prob of problems) {
             let day = new Date(prob.reviewedAt).setHours(0, 0, 0, 0);
             uniqueDaysSet.add(day);
         }
-        
+
         let uniqueDays = Array.from(uniqueDaysSet).sort((a, b) => a - b);
 
         let streak = 0;
         let today = new Date().setHours(0, 0, 0, 0);
         let prevDate = uniqueDays[uniqueDays.length - 1];
 
-        if(today === uniqueDays[uniqueDays.length - 1])
-        {
+        if (today === uniqueDays[uniqueDays.length - 1]) {
             streak = 1;
             prevDate = today;
         }
@@ -131,25 +135,25 @@ export const streakCount = async (req, res) => {
 
 
 //Analytics for problem solved in a day
-export const HeatMap = async(req, res) => {
+export const HeatMap = async (req, res) => {
     try {
-        const problems = await Problems.find({user: req.user._id, reviewed: true});
-    
-    const currdate = new Date();
-    const month = new Date(currdate.getFullYear(), currdate.getMonth() + 1, 0).getDate();
+        const problems = await Problems.find({ user: req.user._id, reviewed: true });
 
-    const monthArr = Array(month).fill(0);
+        const currdate = new Date();
+        const month = new Date(currdate.getFullYear(), currdate.getMonth() + 1, 0).getDate();
 
-    problems.forEach((problem) => {
-          const createdDate = new Date(problem.createdAt);
+        const monthArr = Array(month).fill(0);
 
-          if(createdDate.getMonth() === currdate.getMonth() && createdDate.getFullYear() === currdate.getFullYear()){
-              const day = createdDate.getDate();
-              monthArr[day - 1]++;
-          }
-    });
+        problems.forEach((problem) => {
+            const createdDate = new Date(problem.createdAt);
 
-    return res.status(200).json(new ApiResponse(200, "SuccessFull", monthArr, true));
+            if (createdDate.getMonth() === currdate.getMonth() && createdDate.getFullYear() === currdate.getFullYear()) {
+                const day = createdDate.getDate();
+                monthArr[day - 1]++;
+            }
+        });
+
+        return res.status(200).json(new ApiResponse(200, "SuccessFull", monthArr, true));
     } catch (error) {
         return res.status(400).json(new ApiResponse(400, "Something went wrong", null, false));
     }
