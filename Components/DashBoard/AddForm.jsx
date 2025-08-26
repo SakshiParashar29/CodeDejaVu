@@ -1,62 +1,62 @@
 import React, { useState } from "react";
 import axios from 'axios'
 
-const AddForm = ({onAction}) => {
+const AddForm = ({ onAction }) => {
   // Generate random activity levels for 30 days
-  const heatMap = Array.from({ length: 95}, () =>
-    Math.floor(Math.random() * 5)
-  );
+  // const heatMap = Array.from({ length: 95}, () =>
+  //   Math.floor(Math.random() * 5)
+  // );
 
   // Map activity level to Tailwind color classes
-  const getLevel = (level) => {
-    switch (level) {
-      case 0:
-        return "bg-gray-200"; // No activity
-      case 1:
-        return "bg-green-200"; // Low
-      case 2:
-        return "bg-green-400"; // Medium
-      case 3:
-        return "bg-green-600"; // High
-      case 4:
-        return "bg-green-800"; // Very high
-      default:
-        return "bg-gray-200";
-    }
-  };
-  
+  // const getLevel = (level) => {
+  //   switch (level) {
+  //     case 0:
+  //       return "bg-gray-200"; // No activity
+  //     case 1:
+  //       return "bg-green-200"; // Low
+  //     case 2:
+  //       return "bg-green-400"; // Medium
+  //     case 3:
+  //       return "bg-green-600"; // High
+  //     case 4:
+  //       return "bg-green-800"; // Very high
+  //     default:
+  //       return "bg-gray-200";
+  //   }
+  // };
+
   const [name, setProblemName] = useState('');
   const [link, setProblemLink] = useState('');
   const [difficulty, setDifficulty] = useState('');
   const [platform, setPlatform] = useState('');
 
   const submitForm = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const token = localStorage.getItem("token");
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await axios.post(
-      "https://codedejavu-1.onrender.com/api/add-problem",
-      { name, link, difficulty, platform },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+      const response = await axios.post(
+        "https://codedejavu-1.onrender.com/api/add-problem",
+        { name, link, difficulty, platform },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
-    if (response.data.success) {
-      alert("Successfully saved!!");
-      setProblemName('');
-      setProblemLink('');
-      setDifficulty('');
-      setPlatform('');
-      if (onAction) onAction();
-    } else {
-      alert("Error: " + response.data.message);
+      if (response.data.success) {
+        alert("Successfully saved!!");
+        setProblemName('');
+        setProblemLink('');
+        setDifficulty('');
+        setPlatform('');
+        if (onAction) onAction();
+      } else {
+        alert("Error: " + response.data.message);
+      }
+    } catch (error) {
+      console.log("Error occurred : ", error);
+      alert("Something went wrong!!");
     }
-  } catch (error) {
-    console.log("Error occurred : ", error);
-    alert("Something went wrong!!");
-  }
-};
+  };
 
 
   return (
@@ -134,13 +134,8 @@ const AddForm = ({onAction}) => {
           </h2>
 
           {/* Heatmap Grid */}
-          <div className="grid grid-cols-15 gap-1 justify-center">
-            {heatMap.map((level, index) => (
-              <div
-                key={index}
-                className={`w-5 h-5 rounded-sm ${getLevel(level)}`}
-              ></div>
-            ))}
+          <div className="flex justify-center items-center h-24">
+            <p className="text-gray-500 italic">Feature coming soon...</p>
           </div>
         </div>
       </div>
