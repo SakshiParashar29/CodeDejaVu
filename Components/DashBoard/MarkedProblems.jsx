@@ -79,7 +79,6 @@ const MarkedProblems = ({onAction, reload}) => {
         </span>
       </h2>
 
-      {/* ✅ FIXED: wrap header + rows inside the else block */}
       {problems.length === 0 ? (
         <div className="text-center text-gray-500 mt-10">
           No problems marked yet. Start adding some to build your revision vault!
