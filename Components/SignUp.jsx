@@ -18,7 +18,7 @@ const SignUp = () => {
     }
 
     try {
-      const response = await axios.post('https://code-deja-vu.vercel.app/api/signup', {
+      const response = await axios.post('https://codedejavu-1.onrender.com/api/signup', {
         username: userName,
         email: email,
         password: password

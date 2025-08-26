@@ -9,7 +9,7 @@ const MarkedProblems = ({onAction, reload}) => {
     const fetchProblems = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://localhost:3000/api/marked-problems', {
+        const response = await axios.get('https://codedejavu-1.onrender.com/api/marked-problems', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProblems(response.data.data);
@@ -33,7 +33,7 @@ const MarkedProblems = ({onAction, reload}) => {
     // Send PATCH request to backend
     const token = localStorage.getItem("token");
     await axios.post(
-      `http://localhost:3000/api/update-problem`,
+      `https://codedejavu-1.onrender.com/api/update-problem`,
       { problemId: problem._id, reviewed: newReviewed },
       { headers: { Authorization: `Bearer ${token}` } }
     );
