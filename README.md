@@ -16,5 +16,4 @@ It simplifies the revision process using spaced repetition (1-2-4-7-15 day techn
 - Unified platform for revision coding problems  
 - Spaced repetition reminder system (1-2-4-7-15)  
 - Progress tracking across multiple coding sheets  
-- Notes section for personal preparation  
-- Simple predefined login system for access
+- Notes section for personal preparation  (work in progress)
