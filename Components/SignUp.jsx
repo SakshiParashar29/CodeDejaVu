@@ -30,6 +30,7 @@ const SignUp = () => {
         setuserName('');
         setEmail('');
         setPassword('');
+        localStorage.setItem('username', response.data.userName)
         navigate('/dashboard');
       }
       else {

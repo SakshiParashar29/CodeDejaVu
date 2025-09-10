@@ -56,7 +56,7 @@ const MarkedProblems = ({onAction, reload}) => {
       case "leetcode": return <SiLeetcode className="text-orange-500" />;
       case "codeforces": return <SiCodeforces className="text-blue-600" />;
       case "codechef": return <SiCodechef className="text-red-600" />;
-      case "geeksforgeeks": return <SiGeeksforgeeks className="text-green-600" />;
+      case "gfg": return <SiGeeksforgeeks className="text-green-600" />;
       default: return null;
     }
   };

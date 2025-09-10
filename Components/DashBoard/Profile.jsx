@@ -7,6 +7,11 @@ const Profile = ({ reload }) => {
   const [streak, setStreak] = useState(0);
   const [solved, setSolved] = useState(0);
 
+  const username = localStorage.getItem('username');
+  const [dp, setDp] = useState("DP");
+  const [isEditing, setIsEditing] = useState(false);
+  const handleChange = (e) => { setDp(e.target.value); };
+  const handleBlur = () => { setIsEditing(false); };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -53,10 +58,13 @@ const Profile = ({ reload }) => {
         </div>
         <div className="bg-red-100 text-center p-4 rounded-md font-semibold text-gray-800">
           Your Nemesis
-          <p className='text-xl text-red-700'>DP</p>
+          <div className="mt-2" onClick={() => !isEditing && setIsEditing(true)}>
+            {isEditing ? (<input type="text" value={dp} onChange={handleChange} onBlur={handleBlur} autoFocus className="text-xl text-red-700 border-red-400 focus:outline-none bg-transparent text-center border-b w-24" />)
+              :
+              (<p className="text-xl text-red-700 cursor-pointer" > {dp} </p>)}
+          </div>
         </div>
       </div>
-
       <div className="flex flex-col items-center justify-center text-gray-700">
         <img
           src="/user-avatar.png"
