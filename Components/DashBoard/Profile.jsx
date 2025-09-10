@@ -71,7 +71,7 @@ const Profile = ({ reload }) => {
           alt="Profile"
           className="w-24 h-24 rounded-full border border-gray-300 shadow"
         />
-        <h2 className="mt-4 text-lg font-bold">Sakshi</h2>
+        <h2 className="mt-4 text-lg font-bold">{username}</h2>
         <p className="text-sm text-gray-500">Trust issues? I've seen my code run on the first try.</p>
       </div>
     </div>
