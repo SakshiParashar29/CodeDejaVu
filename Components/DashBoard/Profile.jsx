@@ -7,7 +7,7 @@ const Profile = ({ reload }) => {
   const [streak, setStreak] = useState(0);
   const [solved, setSolved] = useState(0);
 
-  const username = localStorage.getItem('username');
+  const username = localStorage.getItem('username') || "Guest";
   const [dp, setDp] = useState("DP");
   const [isEditing, setIsEditing] = useState(false);
   const handleChange = (e) => { setDp(e.target.value); };
