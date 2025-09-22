@@ -68,3 +68,16 @@ export const signIn = async (req, res) => {
             .json(new ApiResponse(500, error.message, null, false));
     }
 };
+
+
+//Getting the profile pic
+export const getProfile = async(req, res) => {
+    const user = await User.findById(req.user._id);
+
+    if(!user)
+    {
+        return res.status(404).json(new ApiResponse(404, "user not found", user, false));
+    }
+
+    return res.status(200).json(new ApiResponse(200, "Successfully fetched", {username: user.username}, null));
+}

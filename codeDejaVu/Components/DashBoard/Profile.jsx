@@ -7,18 +7,7 @@ const Profile = ({ reload }) => {
   const [streak, setStreak] = useState(0);
   const [solved, setSolved] = useState(0);
 
-  const username = localStorage.getItem('username') || "Guest";
-
-  const [dp, setDp] = useState("DP");
-  const [isEditing, setIsEditing] = useState(false);
-
-  const handleChange = (e) => {
-    setDp(e.target.value);
-  };
-
-  const handleBlur = () => {
-    setIsEditing(false);
-  };
+  const [username, setUsername] = useState("Guest");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +27,12 @@ const Profile = ({ reload }) => {
         const reviewedCnt = await axios.get('https://codedejavu-1.onrender.com/api/reviewed-problems', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setSolved(reviewedCnt.data.data);
+        setSolved(reviewedCnt.data.data.username);
+
+        const profileName = await axios.get('https://codedejavu-1.onrender.com/api/profile', {
+          headers: {Authorization: `Bearer ${token}`}
+        });
+        setUsername(profileName.data.data.username);
 
       } catch (err) {
         console.error("Error fetching profile data:", err);
@@ -66,31 +60,13 @@ const Profile = ({ reload }) => {
         </div>
         <div className="bg-red-100 text-center p-4 rounded-md font-semibold text-gray-800">
           Your Nemesis
-          <div className="mt-2"  onClick={() => !isEditing && setIsEditing(true)}>
-            {isEditing ? (
-              <input
-                type="text"
-                value={dp}
-                onChange={handleChange}
-                onBlur={handleBlur}
-                autoFocus
-                className="text-xl text-red-700 border-red-400 focus:outline-none bg-transparent text-center border-b w-24"
-              />
-            ) : (
-              <p
-                className="text-xl text-red-700 cursor-pointer"
-              >
-                {dp}
-              </p>
-            )}
-          </div>
+          <p className='text-xl text-red-700'>DP</p>
         </div>
 
       </div>
-
       <div className="flex flex-col items-center justify-center text-gray-700">
         <img
-          src="/user-avatar.png"
+          src="/logo.png"
           alt="Profile"
           className="w-24 h-24 rounded-full border border-gray-300 shadow"
         />

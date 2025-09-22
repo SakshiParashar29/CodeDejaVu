@@ -1,16 +1,19 @@
-<<<<<<< HEAD
-# React + Vite
+# CodeDéjàVu
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+CodeDéjàVu is a centralized platform designed for coders to track, revise, and manage coding problems across platforms like LeetCode, GFG, Striver Sheet, and more.  
+It simplifies the revision process using spaced repetition (1-2-4-7-15 day technique) and provides progress tracking with notes.
 
-Currently, two official plugins are available:
+## 🚀 Live Demo
+[Visit CodeDéjàVu](https://code-deja-vu.vercel.app/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🛠️ Tech Stack
+- **Frontend**: React, Tailwind CSS  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB Atlas  
+- **Deployment**: Vercel (frontend), Render (backend)  
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
-=======
-# CodeDejaVu
->>>>>>> 9f46ab5545c4d682f93770cb90a7a8d2914358da
+## ✨ Features
+- Unified platform for revision coding problems  
+- Spaced repetition reminder system (1-2-4-7-15)  
+- Progress tracking across multiple coding sheets  
+- Notes section for personal preparation  (work in progress)

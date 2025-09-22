@@ -1,5 +1,5 @@
 import express from 'express'
-import { signUp, signIn } from '../Controllers/userController.js';
+import { signUp, signIn, getProfile } from '../Controllers/userController.js';
 import {addProblem, getProblems, updateProblem, problemCount, reviewedProblems, streakCount, HeatMap} from '../Controllers/ProblemController.js'
 
 import { Revision } from '../Controllers/RevisionController.js';
@@ -17,6 +17,7 @@ router.get('/reviewed-problems',authMiddleware, reviewedProblems); //complete
 router.get('/streak',authMiddleware, streakCount); //complete
 router.get('/heat-map',authMiddleware, HeatMap); //complete
 router.get('/marked-problems', authMiddleware, Revision); //complete
+router.get('/profile', authMiddleware, getProfile);
 
 
 export default router;

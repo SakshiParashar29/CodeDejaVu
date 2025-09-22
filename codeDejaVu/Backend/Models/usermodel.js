@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    profile: {
+        type: String,
+        default: './logo.png',
     }
 }, {timestamps: true}); //auto add the createdAt and updatedAt date.
 
