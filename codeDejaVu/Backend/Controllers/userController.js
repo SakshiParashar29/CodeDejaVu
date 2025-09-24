@@ -79,5 +79,22 @@ export const getProfile = async(req, res) => {
         return res.status(404).json(new ApiResponse(404, "user not found", user, false));
     }
 
-    return res.status(200).json(new ApiResponse(200, "Successfully fetched", {username: user.username}, null));
+    return res.status(200).json(new ApiResponse(200, "Successfully fetched", {username: user.username, nemesis: user.nemesis}, true));
 }
+
+export const updateNemesis = async (req, res) => {
+  try {
+    const { nemesis } = req.body;
+
+    if (!nemesis) {
+      return res.status(400).json(new ApiResponse(400, "Nemesis is required", null, false));
+    }
+
+    req.user.nemesis = nemesis; 
+    await req.user.save();
+
+    return res.status(200).json(new ApiResponse(200, "Nemesis updated", req.user.nemesis, true));
+  } catch (err) {
+    return res.status(500).json(new ApiResponse(500, "Error updating nemesis", null, false));
+  }
+};

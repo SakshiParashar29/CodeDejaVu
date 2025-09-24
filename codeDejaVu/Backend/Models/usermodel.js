@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     profile: {
         type: String,
         default: './logo.png',
+    },
+    nemesis: {
+        type: String,
+        default: "DP"
     }
 }, {timestamps: true}); //auto add the createdAt and updatedAt date.
 

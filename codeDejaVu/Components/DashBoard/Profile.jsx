@@ -8,6 +8,21 @@ const Profile = ({ reload }) => {
   const [solved, setSolved] = useState(0);
 
   const [username, setUsername] = useState("Guest");
+  const [nemesis, setNemesis] = useState("DP");
+  const [edit, canEdit] = useState(false);
+
+  const saveNemesis = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.put('https://codedejavu-1.onrender.com/api/nemesis',
+        { nemesis },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (err) {
+      console.error("Error updating nemesis:", err);
+    }
+  };
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,12 +42,13 @@ const Profile = ({ reload }) => {
         const reviewedCnt = await axios.get('https://codedejavu-1.onrender.com/api/reviewed-problems', {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setSolved(reviewedCnt.data.data.username);
+        setSolved(reviewedCnt.data.data);
 
         const profileName = await axios.get('https://codedejavu-1.onrender.com/api/profile', {
-          headers: {Authorization: `Bearer ${token}`}
+          headers: { Authorization: `Bearer ${token}` }
         });
         setUsername(profileName.data.data.username);
+        setNemesis(profileName.data.data.nemesis || "DP");
 
       } catch (err) {
         console.error("Error fetching profile data:", err);
@@ -60,7 +76,15 @@ const Profile = ({ reload }) => {
         </div>
         <div className="bg-red-100 text-center p-4 rounded-md font-semibold text-gray-800">
           Your Nemesis
-          <p className='text-xl text-red-700'>DP</p>
+          {/* <p className='text-xl text-red-700'>DP</p> */}
+          <input type="text" className='text-xl text-center w-24 text-red-700' value={nemesis} onChange={(e) => {setNemesis(e.target.value); canEdit(true)}} />
+          {edit ?
+            <button
+              onClick={() => {saveNemesis(); canEdit(false)}}
+              className='bg-red-700 text-white px-3 py-1 rounded mt-1 text-sm'
+            >
+              Save
+            </button> : ""}
         </div>
 
       </div>
