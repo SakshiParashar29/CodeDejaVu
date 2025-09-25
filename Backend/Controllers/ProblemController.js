@@ -50,7 +50,6 @@ export const updateProblem = async (req, res) => {
             { _id: problemId, user: req.user._id },
             {
                 $set: {
-                    reviewed,
                     reviewedAt: reviewed ? new Date() : null
                 }
             },
@@ -82,7 +81,17 @@ export const problemCount = async (req, res) => {
 // Reviewed problems count
 export const reviewedProblems = async (req, res) => {
     try {
-        const count = await Problems.countDocuments({ user: req.user._id, reviewed: true });
+        let startDay = new Date();
+        startDay.setHours(0,0,0,0);
+
+        let endDay = new Date();
+        endDay.setHours(23, 59, 59, 999);
+        
+        const count = await Problems.countDocuments({
+            user: req.user._id,
+            reviewedAt: {$gte: startDay, $lte: endDay}
+        });
+
         return res.status(200).json(new ApiResponse(200, "Reviewed problems", count, true));
     } catch (err) {
         return res.status(500).json(new ApiResponse(500, "Error fetching reviewed problems", null, false));
@@ -92,7 +101,10 @@ export const reviewedProblems = async (req, res) => {
 // Streak count
 export const streakCount = async (req, res) => {
     try {
-        const problems = await Problems.find({ user: req.user._id, reviewed: true }).sort({ reviewedAt: 1 });
+        const problems = await Problems.find({
+            user: req.user._id,
+            reviewedAt: { $ne: null }
+        }).sort({ reviewedAt: 1 });
 
         if (problems.length === 0) {
             return res.status(200).json(new ApiResponse(200, "Streak count", 0, true));
@@ -108,28 +120,28 @@ export const streakCount = async (req, res) => {
 
         let streak = 0;
         let today = new Date().setHours(0, 0, 0, 0);
-        let prevDate = uniqueDays[uniqueDays.length - 1];
-
-        if (today === uniqueDays[uniqueDays.length - 1]) {
+        let lastDay = uniqueDays[uniqueDays.length - 1];
+        if (lastDay === today) {
             streak = 1;
-            prevDate = today;
+        } else {
+            return res.status(200).json(new ApiResponse(200, "Streak count", 0, true));
         }
 
         for (let i = uniqueDays.length - 2; i >= 0; i--) {
-            let currDate = uniqueDays[i];
-            let diff = (prevDate - currDate) / (1000 * 60 * 60 * 24);
+            let curr = uniqueDays[i];
+            let diff = (lastDay - curr) / (1000 * 60 * 60 * 24);
 
             if (diff === 1) {
                 streak++;
-                prevDate = currDate;
-            } else if (diff > 1) {
+                lastDay = curr;
+            } else {
                 break;
             }
         }
 
         return res.status(200).json(new ApiResponse(200, "Streak count", streak, true));
     } catch (err) {
-        return res.status(500).json(new ApiResponse(500, "Error calculating streak count", null, false));
+        return res.status(500).json(new ApiResponse(500, "Error calculating streak count", err.message, false));
     }
 };
 
@@ -137,7 +149,7 @@ export const streakCount = async (req, res) => {
 //Analytics for problem solved in a day
 export const HeatMap = async (req, res) => {
     try {
-        const problems = await Problems.find({ user: req.user._id, reviewed: true });
+        const problems = await Problems.find({ user: req.user._id, reviewedAt: {$ne: null} });
 
         const currdate = new Date();
         const month = new Date(currdate.getFullYear(), currdate.getMonth() + 1, 0).getDate();
@@ -145,10 +157,10 @@ export const HeatMap = async (req, res) => {
         const monthArr = Array(month).fill(0);
 
         problems.forEach((problem) => {
-            const createdDate = new Date(problem.createdAt);
+            const reviewedDate = new Date(problem.reviewedAt);
 
-            if (createdDate.getMonth() === currdate.getMonth() && createdDate.getFullYear() === currdate.getFullYear()) {
-                const day = createdDate.getDate();
+            if (reviewedDate.getMonth() === currdate.getMonth() && reviewedDate.getFullYear() === currdate.getFullYear()) {
+                const day = reviewedDate.getDate();
                 monthArr[day - 1]++;
             }
         });
