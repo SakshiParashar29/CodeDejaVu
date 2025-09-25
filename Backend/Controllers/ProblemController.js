@@ -50,6 +50,7 @@ export const updateProblem = async (req, res) => {
             { _id: problemId, user: req.user._id },
             {
                 $set: {
+                    reviewed: true,
                     reviewedAt: reviewed ? new Date() : null
                 }
             },
