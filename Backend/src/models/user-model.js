@@ -4,8 +4,8 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
-        trim: true,
         unique: true,
+        trim: true,
     },
     email: {
         type: String,
@@ -14,12 +14,42 @@ const userSchema = new mongoose.Schema({
         lowercase: true,
         trim: true,
     },
-    password: {
+    passwordHash: {
         type: String,
-        required: true,
+    },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true,  
+    },
+    isEmailVerified: {
+        type: Boolean,
+        default: false,
+    },
+    emailVerifyToken: {
+        type: String,
+        default: undefined,
+    },
+    tokenVersion: {
+        type: Number,
+        default: 0,
+    },
+    resetPasswordToken: {
+        type: String,
+        default: undefined,
+    },
+    resetPasswordExpires: {
+        type: Date,
+        default: undefined,
+    },
+    nemesis: {
+        type: String,
+        default: "DP",
+    },
+    profile: {
+        type: String,
+        default: './logo.png',
     },
 }, { timestamps: true });
 
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;
+module.exports = mongoose.model('User', userSchema);
