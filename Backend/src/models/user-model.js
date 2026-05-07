@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: undefined,
     },
+    emailVerifyTokenExpires: {
+        type: Date,
+        default: undefined,
+    },
     tokenVersion: {
         type: Number,
         default: 0,

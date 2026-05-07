@@ -80,7 +80,7 @@ const getCompletedCountHandler = asyncHandler(async (req, res) => {
 const getHeatMapHandler = asyncHandler(async(req, res) => {
     const problems = await Problem.find({
         user: req.user._id,
-        reviewedAt: {$ne: null}
+        reviewed: true
     });
 
     console.log(problems);

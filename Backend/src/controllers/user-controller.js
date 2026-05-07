@@ -4,13 +4,13 @@ const ApiResponse = require('../utils/api-response');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const hashPassword = require('../lib/hash');
-const { createAccessToken, createRereshToken, verifyRefreshToken } = require('../lib/token');
+const { createAccessToken, createRefreshToken, verifyRefreshToken } = require('../lib/token');
 const crypto = require('crypto');
 const sendEmail = require('../lib/email');
 
 
 function getAppUrl() {
-    const url = process.env.APP_URL || "http://localhost:3000";
+    const url = process.env.CLIENT_URL || "http://localhost:5173";
     return url;
 }
 
@@ -21,7 +21,12 @@ const verifyEmailHandler = asyncHandler(async (req, res) => {
         return res.status(400).json(new ApiResponse(400, "Token is required"));
     }
 
-    const user = await User.findOne({ emailVerifyToken: token });
+     const hashedToken = crypto
+        .createHash('sha256')
+        .update(token)
+        .digest('hex');
+
+    const user = await User.findOne({ emailVerifyToken: hashedToken, emailVerifyTokenExpires: { $gt: new Date() } });
 
     if (!user) {
         return res.status(400).json(new ApiResponse(400, "Invalid or expired token"));
@@ -29,6 +34,7 @@ const verifyEmailHandler = asyncHandler(async (req, res) => {
 
     user.isEmailVerified = true;
     user.emailVerifyToken = undefined;
+    user.emailVerifyTokenExpires = undefined;
     await user.save();
 
     return res.status(200).json(new ApiResponse(200, 'Email Verified Successfully'));
@@ -50,12 +56,15 @@ const registerHandler = asyncHandler(async (req, res) => {
 
     const hashedPassword = await hashPassword(password);
     const verifyToken = crypto.randomBytes(32).toString('hex');
+    const hashedToken = crypto.createHash('sha256').update(verifyToken).digest('hex');
+
 
     const user = await User.create({
         username,
         email: normalisedEmail,
         passwordHash: hashedPassword,
-        emailVerifyToken: verifyToken,
+        emailVerifyToken: hashedToken,
+        emailVerifyTokenExpires: new Date(Date.now() + 1000 * 60 * 30)
     });
 
     const verifyUrl = `${getAppUrl()}/auth/verify-email?token=${verifyToken}`;
@@ -80,11 +89,10 @@ const loginHandler = asyncHandler(async (req, res) => {
     if (!user) {
         return res.status(404).json(new ApiResponse(404, "User not found"));
     }
-
     const isPasswordCorrect = await bcrypt.compare(password, user.passwordHash);
 
     if (!isPasswordCorrect) {
-        return res.status(401).json(new ApiResponse(401, "Invalid password"));
+        return res.status(400).json(new ApiResponse(401, "Invalid password"));
     }
 
     if (!user.isEmailVerified) {
@@ -92,7 +100,7 @@ const loginHandler = asyncHandler(async (req, res) => {
     }
 
     const accessToken = createAccessToken(user.id, user.username, user.tokenVersion);
-    const refreshToken = createRereshToken(user.id, user.tokenVersion);
+    const refreshToken = createRefreshToken(user.id, user.tokenVersion);
 
     const isProd = process.env.NODE_ENV === 'production';
 
@@ -102,6 +110,9 @@ const loginHandler = asyncHandler(async (req, res) => {
         sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000
     })
+
+    console.log("Login");
+
 
     return res.status(200).json(new ApiResponse(200, "Logged in successfully", {
         token: accessToken,
@@ -148,7 +159,12 @@ const refreshTokensHandler = asyncHandler(async (req, res) => {
         return res.status(401).json(new ApiResponse(401, "Invalid Token"));
     }
 
-    const payload = verifyRefreshToken(token);
+    let payload;
+    try {
+        payload = verifyRefreshToken(token);
+    } catch (err) {
+        return res.status(401).json(new ApiResponse(401, "Invalid or expired refresh token"));
+    }
 
     const user = await User.findById(payload.sub);
 
@@ -162,7 +178,7 @@ const refreshTokensHandler = asyncHandler(async (req, res) => {
 
     const newAccessToken = createAccessToken(user.id, user.username, user.tokenVersion);
 
-    const newRefreshToken = createRereshToken(user.id, user.tokenVersion);
+    const newRefreshToken = createRefreshToken(user.id, user.tokenVersion);
 
     const isProd = process.env.NODE_ENV === 'production';
 
@@ -174,7 +190,7 @@ const refreshTokensHandler = asyncHandler(async (req, res) => {
     });
 
     return res.status(200).json(new ApiResponse(200, 'Token Refreshed', {
-        newAccessToken,
+        token: newAccessToken,
         user: {
             id: user.id,
             email: user.email,
@@ -187,7 +203,7 @@ const forgetPasswordHandler = asyncHandler(async (req, res) => {
     const { email } = req.body;
 
     if (!email) {
-       return res.status(400).json(new ApiResponse(400, "Email is required"));
+        return res.status(400).json(new ApiResponse(400, "Email is required"));
     }
 
     const normalisedEmail = email.toLowerCase().trim();
@@ -195,7 +211,7 @@ const forgetPasswordHandler = asyncHandler(async (req, res) => {
     const user = await User.findOne({ email: normalisedEmail });
 
     if (!user) {
-       return res.status(200).json(new ApiResponse(200, "If an account with this email exists, a reset link has been sent"));
+        return res.status(200).json(new ApiResponse(200, "If an account with this email exists, a reset link has been sent"));
     }
 
     const rawToken = await crypto.randomBytes(32).toString('hex');
@@ -223,11 +239,11 @@ const resetPasswordHandler = asyncHandler(async (req, res) => {
     const { password, confirmPassword, token } = req.body;
 
     if (!password || !confirmPassword || !token) {
-       return res.status(400).json(new ApiResponse(400, "All fields are required"));
+        return res.status(400).json(new ApiResponse(400, "All fields are required"));
     }
 
     if (password !== confirmPassword) {
-       return res.status(400).json(new ApiResponse(400, "Passwords do not match"));
+        return res.status(400).json(new ApiResponse(400, "Passwords do not match"));
     }
 
     const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
