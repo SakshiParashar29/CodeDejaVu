@@ -21,7 +21,7 @@ const Register = () => {
             setLoading(true);
             const response = await registerApi({ username: userName, email, password });
 
-            if (response.data.statusCode === 201) {
+            if (response.data.success) {
                 navigate('/check-email');
             }
         } catch (error) {

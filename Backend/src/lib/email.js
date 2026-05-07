@@ -1,30 +1,18 @@
-const nodeMailer = require('nodemailer');
+const { Resend } = require('resend');
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (to, subject, html) => {
-    if (!process.env.SMTP_HOST || !process.env.SMTP_PASS || !process.env.SMTP_USER) {
-        console.log("Email envs are not available");
-        return;
+    try {
+        await resend.emails.send({
+            from: process.env.EMAIL_FROM,
+            to,
+            subject,
+            html,
+        });
+    } catch (err) {
+        console.log("EMAIL ERROR:", err.message);
     }
-    const host = process.env.SMTP_HOST;
-    const port = process.env.SMTP_PORT || 587;
-    const user = process.env.SMTP_USER;
-    const pass = process.env.SMTP_PASS;
-    const from = process.env.EMAIL_FROM;
-
-    const transport = nodeMailer.createTransport({
-        host,
-        port,
-        secure: false,
-        auth: {
-            user,
-            pass
-        }
-    });
-
-    await transport.sendMail({
-        from, to, subject, html
-    });
-
-}
+};
 
 module.exports = sendEmail;

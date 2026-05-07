@@ -68,12 +68,17 @@ const registerHandler = asyncHandler(async (req, res) => {
     });
 
     const verifyUrl = `${getAppUrl()}/auth/verify-email?token=${verifyToken}`;
-
+    
+    console.log("sending email...");
+    
     await sendEmail(
         user.email,
         'Verify Your Email',
         `<p>Please verify your email by clicking: <a href="${verifyUrl}">${verifyUrl}</a></p>`
     );
+
+    console.log("email sent");
+    
 
     return res.status(201).json(new ApiResponse(201, "Account created. Please verify your email.", { username: user.username }));
 });
